@@ -98,7 +98,7 @@ EOF		[\0]
 {COMMENT}	/* we do nothing as expected */
 {NEWLINE}	{std::cout << std::endl; newLine++;/*std::cout<<newLine;*/}
 {ID}		std::cout << "ID";
-{STRING}	{char in = yyinput();
+{STRING}	{int in = yyinput();
 		while(in != '"' ){
 			in=yyinput();
 			newLine= in=='\n'? newLine++:newLine;
@@ -106,8 +106,7 @@ EOF		[\0]
 		if (in == '\0'){
 			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente";
 			yyterminate();
-		}else
-			unput(in);}
+		}}
 {INDENT}	{indenting= indenting || yytext=="\n"? 1: 0;
 		while(indenting){
 			yylex();
@@ -125,8 +124,7 @@ EOF		[\0]
 			std::cout<<"Indentation error in line: "<<newLine;
 			yyterminate();
 		}
-		nivel=0;
-		unput(*yytext);}
+		nivel=0;}
 {DEDENT}	{stack.pop();--indenting;std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";}
 
 
