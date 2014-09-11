@@ -14,3 +14,5 @@ make compile run
 Para salir basta con escribir "salir" durante la ejecución del programa.
 Para limpiar la carpeta de los archivos ejecutables generados se puede ejecutar el comando
 make clean
+
+
