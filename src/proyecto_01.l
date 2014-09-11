@@ -2,14 +2,12 @@
 #include <iostream>
 #include "../lib/Stack.h"
 
-int newLine=0;
+int newLine=1;
 
 %}
 
 %option noyywrap
 %option outfile="proyecto_01_scanner.cpp"
-
-
 
 
 FALSE		"False"
@@ -50,7 +48,7 @@ NEWLINE		[\n]
 COMMENT		"#"
 STRING		"\""
 ERROR		"mistake"
-EOF		"\0"
+EOF		[\0]
 
 
 %%
@@ -88,17 +86,19 @@ EOF		"\0"
 {NUMBER} 	std::cout << "NUMBER";
 
 {SALIR}		yyterminate();
-{ERROR}		{std::cout<<"Error de sintáxis en la línea pi-ésima";yyterminate();}
+{ERROR}		{std::cout <<"Error de sintáxis en la línea " << newLine<<"\n"; yyterminate();}
 {COMMENT}	/* we do nothing as expected */
-{NEWLINE}	{std::cout << std::endl; newLine++;printf("%i\n",newLine);}
+{NEWLINE}	{std::cout << std::endl; newLine++;}
 {ID}		std::cout << "ID";
 {STRING}	{int in = yyinput();
-		while(in != '"' ){
-			in=yyinput();
-			newLine= in=='\n'? newLine++:newLine;
-		}
-		if (in == '\0'){
-			std::cout<<"Error de sintaxis: String no terminada correctamente";yyterminate();}}
+	while(in != '"' ){
+		in=yyinput();
+		newLine= in=='\n'? newLine++:newLine;
+	}
+	if (in == '\0'){
+		std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente";
+		yyterminate();
+	}}
 
 
 
