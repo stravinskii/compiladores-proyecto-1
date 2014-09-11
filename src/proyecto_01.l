@@ -1,47 +1,57 @@
 %{
 #include <iostream>
-#include "lib/stack.h"
+#include "../lib/Stack.h"
+
+int newLine=0;
+
 %}
 
 %option noyywrap
-%option outfile="pylex.cpp"
+%option outfile="proyecto_01_scanner.cpp"
+
+
+
 
 FALSE		"False"
 CLASS		"class"
 FINALLY		"finally"
-IS			"is"
+IS		"is"
 RETURN		"return"
 NONE		"None"
 CONTINUE	"continue"
-FOR			"for"
+FOR		"for"
 LAMBDA		"lambda"
-TRY			"try"
+TRY		"try"
 TRUE		"True"
-DEF			"def"
+DEF		"def"
 FROM		"from"
 WHILE		"while"
-AND			"and"
-DEL			"del"
-NOT			"not"
+AND		"and"
+DEL		"del"
+NOT		"not"
 WITH		"with"
-AS			"as"
+AS		"as"
 ELIF		"elif"
-IF			"if"
-OR			"or"
+IF		"if"
+OR		"or"
 ELSE		"else"
 IMPORT		"import"
 PASS		"pass"
 BREAK		"break"
 EXCEPT		"except"
-IN			"in"
+IN		"in"
 PRINT		"print"
 
-ID 			[a-z][a-z0-9]*
+SALIR		"salir"
+ID 		[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
 NEWLINE		[\n]
-COMMENT		"#".*
-STRING		\".*\"
+COMMENT		"#"
+STRING		"\""
+ERROR		"mistake"
+EOF		"\0"
+
 
 %%
 
@@ -77,18 +87,30 @@ STRING		\".*\"
 
 {NUMBER} 	std::cout << "NUMBER";
 
+{SALIR}		yyterminate();
+{ERROR}		{std::cout<<"Error de sintáxis en la línea pi-ésima";yyterminate();}
 {COMMENT}	/* we do nothing as expected */
-{NEWLINE}	std::cout << std::endl;
+{NEWLINE}	{std::cout << std::endl; newLine++;printf("%i\n",newLine);}
 {ID}		std::cout << "ID";
-{STRING}	std::cout << "STRING";
+{STRING}	{int in = yyinput();
+		while(in != '"' ){
+			in=yyinput();
+			newLine= in=='\n'? newLine++:newLine;
+		}
+		if (in == '\0'){
+			std::cout<<"Error de sintaxis: String no terminada correctamente";yyterminate();}}
+
+
 
 %%
 
+
+
 int main(int argc, char *argv[])
 {
-	stack stack;
+	Stack stack;
 	// push zero to stack as proposed in Python documentation
-	stack.push((char*) '0');
+	stack.push(0);
 
 	if (argc > 1)
 	{
