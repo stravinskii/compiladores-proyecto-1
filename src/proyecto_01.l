@@ -3,6 +3,10 @@
 #include "../lib/Stack.h"
 
 int newLine=1;
+int indenting=0;
+int indentLevel=0;
+int nivel=0;
+Stack stack;
 
 %}
 
@@ -40,6 +44,9 @@ EXCEPT		"except"
 IN		"in"
 PRINT		"print"
 
+/*Administrativos*/
+INDENT		("        "|"\t")
+DEDENT		"dedent"
 SALIR		"salir"
 ID 		[a-z][a-z0-9]*
 NUMBER		[0-9]*
@@ -85,21 +92,42 @@ EOF		[\0]
 
 {NUMBER} 	std::cout << "NUMBER";
 
-{SALIR}		yyterminate();
-{ERROR}		{std::cout <<"Error de sintáxis en la línea " << newLine<<"\n"; yyterminate();}
-{COMMENT}	/* we do nothing as expected */
-{NEWLINE}	{std::cout << std::endl; newLine++;}
-{ID}		std::cout << "ID";
-{STRING}	{int in = yyinput();
-	while(in != '"' ){
-		in=yyinput();
-		newLine= in=='\n'? newLine++:newLine;
-	}
-	if (in == '\0'){
-		std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente";
-		yyterminate();
-	}}
 
+{SALIR}		yyterminate();
+{ERROR}		{std::cout <<"Error de sintáxis en la línea " << newLine; yyterminate();}
+{COMMENT}	/* we do nothing as expected */
+{NEWLINE}	{std::cout << std::endl; newLine++;/*std::cout<<newLine;*/}
+{ID}		std::cout << "ID";
+{STRING}	{char in = yyinput();
+		while(in != '"' ){
+			in=yyinput();
+			newLine= in=='\n'? newLine++:newLine;
+		}
+		if (in == '\0'){
+			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente";
+			yyterminate();
+		}else
+			unput(in);}
+{INDENT}	{indenting= indenting || yytext=="\n"? 1: 0;
+		while(indenting){
+			yylex();
+			nivel++;
+			printf("nivel: %i\n",nivel);
+		}
+		if(nivel==indentLevel+1){
+			stack.push(++indentLevel);
+			std::cout<<"Indenting value is: "<<indenting <<"INDENT token produced";
+		}else if(nivel==indentLevel-1){
+			stack.pop();
+			indentLevel--;
+			std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";
+		}else{
+			std::cout<<"Indentation error in line: "<<newLine;
+			yyterminate();
+		}
+		nivel=0;
+		unput(*yytext);}
+{DEDENT}	{stack.pop();--indenting;std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";}
 
 
 %%
