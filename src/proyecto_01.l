@@ -116,10 +116,8 @@ EOF		[\0]
 		}
 		std::cout<<"STRING";}
 {INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
-		if(indentLevel==0)
-			stack.push(1);
 			
-		std::cout<<"INDENT";
+		/*std::cout<<"INDENT";*/
 		while(in==' '||in=='\t'){
 			if(in==' ')
 				spaces++;
@@ -134,7 +132,7 @@ EOF		[\0]
 		}
 		unput(in);
 		
-		if(nivel==indentLevel+1){
+		if(nivel==indentLevel+1 ){
 			stack.push(++indentLevel);
 			std::cout<<"INDENT";
 		}else if(nivel==indentLevel-1){

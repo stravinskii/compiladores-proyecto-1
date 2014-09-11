@@ -1032,10 +1032,8 @@ case 39:
 YY_RULE_SETUP
 #line 118 "proyecto_01.l"
 {int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
-		if(indentLevel==0)
-			stack.push(1);
 			
-		std::cout<<"INDENT";
+		/*std::cout<<"INDENT";*/
 		while(in==' '||in=='\t'){
 			if(in==' ')
 				spaces++;
@@ -1050,7 +1048,7 @@ YY_RULE_SETUP
 		}
 		unput(in);
 		
-		if(nivel==indentLevel+1){
+		if(nivel==indentLevel+1 ){
 			stack.push(++indentLevel);
 			std::cout<<"INDENT";
 		}else if(nivel==indentLevel-1){
@@ -1065,10 +1063,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 152 "proyecto_01.l"
+#line 150 "proyecto_01.l"
 ECHO;
 	YY_BREAK
-#line 1072 "proyecto_01_scanner.cpp"
+#line 1070 "proyecto_01_scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2066,7 +2064,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 152 "proyecto_01.l"
+#line 150 "proyecto_01.l"
 
 
 
