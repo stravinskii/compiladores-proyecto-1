@@ -103,8 +103,8 @@ EOF		[\0]
 		while(in != '\n'){
 			in=yyinput();
 		}
-		}
-{NEWLINE}	{std::cout << "NEWLINE"<<std::endl; newLine++;/*std::cout<<newLine;*/}
+		std::cout <<"COMMENT";}
+{NEWLINE}	{std::cout << "NEWLINE"<<std::endl; newLine++;/*std::cout<<newLine;*/indenting=1;}
 {ID}		std::cout << "ID";
 {STRING}	{int in = yyinput();
 		while(in != '"' ){
@@ -116,11 +116,26 @@ EOF		[\0]
 			yyterminate();
 		}
 		std::cout<<"STRING";}
-{INDENT}	{indenting= indenting || yytext=="\n"? 1: 0;
+{INDENT}	{int in,spaces=0; indenting= (indenting)? 1: 0;
 		while(indenting){
-			yylex();
-			nivel++;
-			printf("nivel: %i\n",nivel);
+			in=yyinput();
+			while(in==' '){
+				++spaces;
+				in=yyinput();
+				if(spaces==8){
+					spaces=0;
+					++nivel;
+					printf("nivel: %i\n",nivel);
+				}
+			}
+			if(in=='\t'){
+				++nivel;
+				printf("nivel: %i\n",nivel);
+			}else{
+				unput(in);
+				break;
+			}
+
 		}
 		indenting=0;
 		if(nivel==indentLevel+1){
@@ -135,7 +150,7 @@ EOF		[\0]
 			/*yyterminate();*/
 		}
 		nivel=0;}
-{DEDENT}	{stack.pop();--indenting;std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";}
+
 
 
 %%
