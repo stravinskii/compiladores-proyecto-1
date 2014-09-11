@@ -3,9 +3,6 @@
 #include "../lib/Stack.h"
 
 int newLine=1;
-int indenting=0;
-int indentLevel=0;
-int nivel=0;
 Stack stack;
 
 %}
@@ -47,7 +44,8 @@ EQUALS		"=="
 ASSIGN		"="
 
 /*Administrativos*/
-INDENT		("        "|"\t")
+
+INDENT		"        "|"\t"
 DEDENT		"dedent"
 SALIR		"salir"
 ID 		[a-z][a-z0-9]*
@@ -103,8 +101,9 @@ EOF		[\0]
 		while(in != '\n'){
 			in=yyinput();
 		}
-		std::cout <<"COMMENT";}
-{NEWLINE}	{std::cout << "NEWLINE"<<std::endl; newLine++;/*std::cout<<newLine;*/indenting=1;}
+		std::cout <<"COMMENT";
+		std::cout<<"NEWLINE\n";}
+{NEWLINE}	{std::cout << "NEWLINE"<<std::endl; newLine++; /*std::cout<<newLine;*/}
 {ID}		std::cout << "ID";
 {STRING}	{int in = yyinput();
 		while(in != '"' ){
@@ -116,37 +115,34 @@ EOF		[\0]
 			yyterminate();
 		}
 		std::cout<<"STRING";}
-{INDENT}	{int in,spaces=0; indenting= (indenting)? 1: 0;
-		while(indenting){
+{INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
+		if(indentLevel==0)
+			stack.push(1);
+			
+		std::cout<<"INDENT";
+		while(in==' '||in=='\t'){
+			if(in==' ')
+				spaces++;
 			in=yyinput();
-			while(in==' '){
+			if(spaces==8){
 				++spaces;
-				in=yyinput();
-				if(spaces==8){
-					spaces=0;
-					++nivel;
-					printf("nivel: %i\n",nivel);
-				}
-			}
-			if(in=='\t'){
+				spaces=0;
 				++nivel;
-				printf("nivel: %i\n",nivel);
-			}else{
-				unput(in);
-				break;
+				std::cout<<"INDENT";
 			}
-
+			++nivel;
 		}
-		indenting=0;
+		unput(in);
+		
 		if(nivel==indentLevel+1){
 			stack.push(++indentLevel);
-			std::cout<<"Indenting value is: "<<indenting <<"INDENT token produced";
+			std::cout<<"INDENT";
 		}else if(nivel==indentLevel-1){
 			stack.pop();
 			indentLevel--;
-			std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";
+			std::cout<<"DEDENT";
 		}else{
-			std::cout<<"Indentation error in line: "<<newLine;
+			/*std::cout<<"Indentation error in line: "<<newLine;*/
 			/*yyterminate();*/
 		}
 		nivel=0;}

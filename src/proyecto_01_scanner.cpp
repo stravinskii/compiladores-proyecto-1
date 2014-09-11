@@ -547,13 +547,10 @@ char *yytext;
 #include "../lib/Stack.h"
 
 int newLine=1;
-int indenting=0;
-int indentLevel=0;
-int nivel=0;
 Stack stack;
 
 /*Administrativos*/
-#line 557 "proyecto_01_scanner.cpp"
+#line 554 "proyecto_01_scanner.cpp"
 
 #define INITIAL 0
 
@@ -740,10 +737,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 63 "proyecto_01.l"
+#line 61 "proyecto_01.l"
 
 
-#line 747 "proyecto_01_scanner.cpp"
+#line 744 "proyecto_01_scanner.cpp"
 
 	if ( !(yy_init) )
 		{
@@ -828,197 +825,198 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 65 "proyecto_01.l"
+#line 63 "proyecto_01.l"
 std::cout << "FALSE";                     
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 66 "proyecto_01.l"
+#line 64 "proyecto_01.l"
 std::cout << "CLASS";                     
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 67 "proyecto_01.l"
+#line 65 "proyecto_01.l"
 std::cout << "FINALLY";               
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 68 "proyecto_01.l"
+#line 66 "proyecto_01.l"
 std::cout << "IS";                     	
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 69 "proyecto_01.l"
+#line 67 "proyecto_01.l"
 std::cout << "RETURN";
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 70 "proyecto_01.l"
+#line 68 "proyecto_01.l"
 std::cout << "NONE";
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 71 "proyecto_01.l"
+#line 69 "proyecto_01.l"
 std::cout << "CONTINUE";
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 72 "proyecto_01.l"
+#line 70 "proyecto_01.l"
 std::cout << "FOR";
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 73 "proyecto_01.l"
+#line 71 "proyecto_01.l"
 std::cout << "LAMBDA";
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 74 "proyecto_01.l"
+#line 72 "proyecto_01.l"
 std::cout << "TRY";
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 75 "proyecto_01.l"
+#line 73 "proyecto_01.l"
 std::cout << "TRUE";
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 76 "proyecto_01.l"
+#line 74 "proyecto_01.l"
 std::cout << "DEF";
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 77 "proyecto_01.l"
+#line 75 "proyecto_01.l"
 std::cout << "FROM";
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 78 "proyecto_01.l"
+#line 76 "proyecto_01.l"
 std::cout << "WHILE";
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 79 "proyecto_01.l"
+#line 77 "proyecto_01.l"
 std::cout << "AND";
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 80 "proyecto_01.l"
+#line 78 "proyecto_01.l"
 std::cout << "DEL";
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 81 "proyecto_01.l"
+#line 79 "proyecto_01.l"
 std::cout << "NOT";
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 82 "proyecto_01.l"
+#line 80 "proyecto_01.l"
 std::cout << "WITH";
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 83 "proyecto_01.l"
+#line 81 "proyecto_01.l"
 std::cout << "AS";
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 84 "proyecto_01.l"
+#line 82 "proyecto_01.l"
 std::cout << "ELIF";
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 85 "proyecto_01.l"
+#line 83 "proyecto_01.l"
 std::cout << "IF";
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 86 "proyecto_01.l"
+#line 84 "proyecto_01.l"
 std::cout << "OR";
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 87 "proyecto_01.l"
+#line 85 "proyecto_01.l"
 std::cout << "ELSE";
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 88 "proyecto_01.l"
+#line 86 "proyecto_01.l"
 std::cout << "IMPORT";
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 89 "proyecto_01.l"
+#line 87 "proyecto_01.l"
 std::cout << "PASS";
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 90 "proyecto_01.l"
+#line 88 "proyecto_01.l"
 std::cout << "BREAK";
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 91 "proyecto_01.l"
+#line 89 "proyecto_01.l"
 std::cout << "EXCEPT";
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 92 "proyecto_01.l"
+#line 90 "proyecto_01.l"
 std::cout << "IN";
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 93 "proyecto_01.l"
+#line 91 "proyecto_01.l"
 std::cout << "PRINT";
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 94 "proyecto_01.l"
+#line 92 "proyecto_01.l"
 std::cout << "EQUALS";
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 95 "proyecto_01.l"
+#line 93 "proyecto_01.l"
 std::cout << "ASSIGN";
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 97 "proyecto_01.l"
+#line 95 "proyecto_01.l"
 std::cout << "NUMBER";
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 100 "proyecto_01.l"
+#line 98 "proyecto_01.l"
 yyterminate();
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 101 "proyecto_01.l"
+#line 99 "proyecto_01.l"
 {std::cout <<"Error de sintáxis en la línea " << newLine; yyterminate();}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 102 "proyecto_01.l"
+#line 100 "proyecto_01.l"
 {int in=yyinput();
 		while(in != '\n'){
 			in=yyinput();
 		}
-		std::cout <<"COMMENT";}
+		std::cout <<"COMMENT";
+		std::cout<<"NEWLINE\n";}
 	YY_BREAK
 case 36:
 /* rule 36 can match eol */
 YY_RULE_SETUP
-#line 107 "proyecto_01.l"
-{std::cout << "NEWLINE"<<std::endl; newLine++;/*std::cout<<newLine;*/indenting=1;}
+#line 106 "proyecto_01.l"
+{std::cout << "NEWLINE"<<std::endl; newLine++; /*std::cout<<newLine;*/}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 108 "proyecto_01.l"
+#line 107 "proyecto_01.l"
 std::cout << "ID";
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 109 "proyecto_01.l"
+#line 108 "proyecto_01.l"
 {int in = yyinput();
 		while(in != '"' ){
 			in=yyinput();
@@ -1032,48 +1030,45 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 119 "proyecto_01.l"
-{int in,spaces=0; indenting= (indenting)? 1: 0;
-		while(indenting){
+#line 118 "proyecto_01.l"
+{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
+		if(indentLevel==0)
+			stack.push(1);
+			
+		std::cout<<"INDENT";
+		while(in==' '||in=='\t'){
+			if(in==' ')
+				spaces++;
 			in=yyinput();
-			while(in==' '){
+			if(spaces==8){
 				++spaces;
-				in=yyinput();
-				if(spaces==8){
-					spaces=0;
-					++nivel;
-					printf("nivel: %i\n",nivel);
-				}
-			}
-			if(in=='\t'){
+				spaces=0;
 				++nivel;
-				printf("nivel: %i\n",nivel);
-			}else{
-				unput(in);
-				break;
+				std::cout<<"INDENT";
 			}
-
+			++nivel;
 		}
-		indenting=0;
+		unput(in);
+		
 		if(nivel==indentLevel+1){
 			stack.push(++indentLevel);
-			std::cout<<"Indenting value is: "<<indenting <<"INDENT token produced";
+			std::cout<<"INDENT";
 		}else if(nivel==indentLevel-1){
 			stack.pop();
 			indentLevel--;
-			std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";
+			std::cout<<"DEDENT";
 		}else{
-			std::cout<<"Indentation error in line: "<<newLine;
+			/*std::cout<<"Indentation error in line: "<<newLine;*/
 			/*yyterminate();*/
 		}
 		nivel=0;}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 156 "proyecto_01.l"
+#line 152 "proyecto_01.l"
 ECHO;
 	YY_BREAK
-#line 1077 "proyecto_01_scanner.cpp"
+#line 1072 "proyecto_01_scanner.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2071,7 +2066,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 156 "proyecto_01.l"
+#line 152 "proyecto_01.l"
 
 
 
