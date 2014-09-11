@@ -43,6 +43,8 @@ BREAK		"break"
 EXCEPT		"except"
 IN		"in"
 PRINT		"print"
+EQUALS		"=="
+ASSIGN		"="
 
 /*Administrativos*/
 INDENT		("        "|"\t")
@@ -89,14 +91,20 @@ EOF		[\0]
 {EXCEPT}	std::cout << "EXCEPT";
 {IN}		std::cout << "IN";
 {PRINT}		std::cout << "PRINT";
+{EQUALS}	std::cout << "EQUALS";
+{ASSIGN}	std::cout << "ASSIGN";
 
 {NUMBER} 	std::cout << "NUMBER";
 
 
 {SALIR}		yyterminate();
 {ERROR}		{std::cout <<"Error de sintáxis en la línea " << newLine; yyterminate();}
-{COMMENT}	/* we do nothing as expected */
-{NEWLINE}	{std::cout << std::endl; newLine++;/*std::cout<<newLine;*/}
+{COMMENT}	{int in=yyinput();
+		while(in != '\n'){
+			in=yyinput();
+		}
+		}
+{NEWLINE}	{std::cout << "NEWLINE"<<std::endl; newLine++;/*std::cout<<newLine;*/}
 {ID}		std::cout << "ID";
 {STRING}	{int in = yyinput();
 		while(in != '"' ){
@@ -106,13 +114,15 @@ EOF		[\0]
 		if (in == '\0'){
 			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente";
 			yyterminate();
-		}}
+		}
+		std::cout<<"STRING";}
 {INDENT}	{indenting= indenting || yytext=="\n"? 1: 0;
 		while(indenting){
 			yylex();
 			nivel++;
 			printf("nivel: %i\n",nivel);
 		}
+		indenting=0;
 		if(nivel==indentLevel+1){
 			stack.push(++indentLevel);
 			std::cout<<"Indenting value is: "<<indenting <<"INDENT token produced";
@@ -122,7 +132,7 @@ EOF		[\0]
 			std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";
 		}else{
 			std::cout<<"Indentation error in line: "<<newLine;
-			yyterminate();
+			/*yyterminate();*/
 		}
 		nivel=0;}
 {DEDENT}	{stack.pop();--indenting;std::cout<<"Indenting value is: "<<indenting <<"DEDENT token produced";}
