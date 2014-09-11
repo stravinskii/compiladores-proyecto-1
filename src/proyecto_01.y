@@ -1,17 +1,13 @@
 %{
 #include <stdio.h>
 int yylex();
-int yyerror(const char *s)	{ printf("Error %s\n",s);}
-}%
+int yyerror(const char *s)	{ printf("Error %s\n",s);};
+int seguir=1;
+%}
 
-%%token 
+%token SALIDA
+%%
+s:	SALIDA		{seguir=0;};
+%%
 
 
-
-int main() {
-  
-  printf(">> ");
-        yyparse();
-
-	return 0;
-}
