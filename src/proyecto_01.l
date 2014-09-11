@@ -1,11 +1,11 @@
 %{
 #include <iostream>
 #include <string>
-#include "My_Stack.h"
+#include "../lib/Stack.h"
 
 
 std::string s="";
-//MY_Stack pila;
+Stack pila;
 int nLine=0;
 
 void newLine(){
