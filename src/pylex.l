@@ -100,14 +100,13 @@ EOF		"\0"
 		while(in != '\n'){
 			in=yyinput();
 		}
-		std::cout <<"COMMENT";
-		std::cout<<"NEWLINE\n";newLine++;}
-{NEWLINE}	{std::cout <<"NEWLINE\n"; newLine++;
+		std::cout <<" COMMENT NEWLINE\n";newLine++;}
+{NEWLINE}	{std::cout <<" NEWLINE\n"; newLine++;
 		int in =yyinput(); 
 		if(in!='\t' && in!=' ' && in !='#'){
 			while(stack.get_Size()){
 				stack.pop();
-				std::cout<<"DEDENT";
+				std::cout<<"DEDENT ";
 			}
 		}
 		unput(in);
@@ -117,7 +116,7 @@ EOF		"\0"
 		while(in != '"' && in != '\n' ){
 			in=yyinput();
 		}
-		
+		unput(' ');
 		if (in == '\n' || in==EOF){
 			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
 			yyterminate();
@@ -132,7 +131,7 @@ EOF		"\0"
 				++spaces;
 				spaces=0;
 				++nivel;
-				std::cout<<"INDENT";
+				std::cout<<"INDENT ";
 			}
 			++nivel;
 		}
@@ -140,11 +139,11 @@ EOF		"\0"
 		
 		if(nivel==indentLevel+1 ){
 			stack.push(++indentLevel);
-			std::cout<<"INDENT";
+			std::cout<<"INDENT ";
 		}else if(nivel==indentLevel-1){
 			stack.pop();
 			indentLevel--;
-			std::cout<<"DEDENT";
+			std::cout<<"DEDENT ";
 		}else{
 			/*std::cout<<"Indentation error in line: "<<newLine;*/
 			/*yyterminate();*/
