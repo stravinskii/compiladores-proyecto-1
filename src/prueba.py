@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 import math
 x = "Codigo de prueba"
+
+
+
+
+
+
 avanza = True
 while avanza: #comentario a media linea
 	y += 1

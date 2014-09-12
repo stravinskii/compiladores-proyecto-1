@@ -51,7 +51,7 @@ SALIR		"salir"
 ID 		[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
-NEWLINE		[\n]
+NEWLINE		"\n"+"\n"*
 COMMENT		"#"
 STRING		"\""
 ERROR		"mistake"
@@ -91,7 +91,6 @@ EOF		[\0]
 {PRINT}		std::cout << "PRINT";
 {EQUALS}	std::cout << "EQUALS";
 {ASSIGN}	std::cout << "ASSIGN";
-
 {NUMBER} 	std::cout << "NUMBER";
 
 
@@ -102,19 +101,19 @@ EOF		[\0]
 			in=yyinput();
 		}
 		std::cout <<"COMMENT";
-		std::cout<<"NEWLINE\n";}
-{NEWLINE}	{std::cout << "NEWLINE"<<std::endl; newLine++; /*std::cout<<newLine;*/}
+		std::cout<<"NEWLINE\n";newLine++;}
+{NEWLINE}	{std::cout << "NEWLINE\n"; newLine++; /*std::cout<<newLine;*/}
 {ID}		std::cout << "ID";
 {STRING}	{int in = yyinput();
-		while(in != '"' ){
+		while(in != '"' && in != '\n' ){
 			in=yyinput();
-			newLine= in=='\n'? newLine++:newLine;
 		}
-		if (in == '\0'){
-			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente";
+		if (in == '\n'){
+			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
 			yyterminate();
-		}
-		std::cout<<"STRING";}
+		}else{
+		/*unput(in);*/
+		std::cout<<"STRING";}}
 {INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
 			
 		/*std::cout<<"INDENT";*/
