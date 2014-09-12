@@ -28,6 +28,7 @@ int Stack::get_Size(){
 	return list.size();
 }
 
+
 /**
  * Función pick tipica en el TAD Pila. 
  */

@@ -8,7 +8,7 @@ Stack stack;
 %}
 
 %option noyywrap
-%option outfile="proyecto_01_scanner.cpp"
+%option outfile="pylex.cpp"
 
 
 FALSE		"False"
@@ -48,14 +48,14 @@ ASSIGN		"="
 INDENT		"        "|"\t"
 DEDENT		"dedent"
 SALIR		"salir"
-ID 		[a-z][a-z0-9]*
+ID		[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
-NEWLINE		"\n"+"\n"*
+NEWLINE		"\n"+
 COMMENT		"#"
 STRING		"\""
 ERROR		"mistake"
-EOF		[\0]
+EOF		"\0"
 
 
 %%
@@ -91,32 +91,39 @@ EOF		[\0]
 {PRINT}		std::cout << "PRINT";
 {EQUALS}	std::cout << "EQUALS";
 {ASSIGN}	std::cout << "ASSIGN";
-{NUMBER} 	std::cout << "NUMBER";
+{NUMBER}	std::cout << "NUMBER";
 
 
 {SALIR}		yyterminate();
-{ERROR}		{std::cout <<"Error de sintáxis en la línea " << newLine; yyterminate();}
+{ERROR}		{std::cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
 		while(in != '\n'){
 			in=yyinput();
 		}
 		std::cout <<"COMMENT";
 		std::cout<<"NEWLINE\n";newLine++;}
-{NEWLINE}	{std::cout << "NEWLINE\n"; newLine++; /*std::cout<<newLine;*/}
-{ID}		std::cout << "ID";
+{NEWLINE}	{std::cout <<"NEWLINE\n"; newLine++;
+		int in =yyinput(); 
+		if(in!='\t' && in!=' ' && in !='#'){
+			while(stack.get_Size()){
+				stack.pop();
+				std::cout<<"DEDENT";
+			}
+		}
+		unput(in);
+		}		
+{ID}		std::cout <<"ID";
 {STRING}	{int in = yyinput();
 		while(in != '"' && in != '\n' ){
 			in=yyinput();
 		}
-		if (in == '\n'){
+		
+		if (in == '\n' || in==EOF){
 			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
 			yyterminate();
 		}else{
-		/*unput(in);*/
 		std::cout<<"STRING";}}
 {INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
-			
-		/*std::cout<<"INDENT";*/
 		while(in==' '||in=='\t'){
 			if(in==' ')
 				spaces++;
@@ -143,7 +150,7 @@ EOF		[\0]
 			/*yyterminate();*/
 		}
 		nivel=0;}
-
+{EOF}		std::cout<<"EOF";
 
 
 %%

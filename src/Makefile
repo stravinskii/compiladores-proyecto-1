@@ -1,10 +1,10 @@
 all: compile
 
 compile:
-	flex proyecto_01.l
-	g++ proyecto_01_scanner.cpp -o proyecto_01
+	flex pylex.l
+	g++ pylex.cpp -o pylex
 clean:
-	rm proyecto_01_scanner.cpp proyecto_01
+	rm pylex.cpp pylex
 
 run: 	
-	./proyecto_01
+	./pylex ejemplo.py
