@@ -42,8 +42,12 @@ IN		"in"
 PRINT		"print"
 EQUALS		"=="
 ASSIGN		"="
+PLUS		"+"
+MINUS		"-"
+MULT		"*"
+DIV		"/"
 
-/*Administrativos*/
+/*Administrativos y caracteres especiales*/
 
 INDENT		"        "|"\t"
 DEDENT		"dedent"
@@ -54,6 +58,7 @@ FRACTION	[0-9]*.[0-9]*
 NEWLINE		"\n"+
 COMMENT		"#"
 STRING		"\""
+COMMA		","
 ERROR		"mistake"
 EOF		"\0"
 
@@ -93,14 +98,18 @@ EOF		"\0"
 {ASSIGN}	std::cout << "ASSIGN";
 {NUMBER}	std::cout << "NUMBER";
 
-
+{COMMA}		std::cout<<" ,";
+{PLUS}		std::cout<<" +";
+{MINUS}		std::cout<<" -";
+{MULT}		std::cout<<" *";
+{DIV}		std::cout<<" /";
 {SALIR}		yyterminate();
 {ERROR}		{std::cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
 		while(in != '\n'){
 			in=yyinput();
 		}
-		std::cout <<" COMMENT NEWLINE\n";newLine++;}
+		std::cout <<"COMMENT NEWLINE\n";newLine++;}
 {NEWLINE}	{std::cout <<" NEWLINE\n"; newLine++;
 		int in =yyinput(); 
 		if(in!='\t' && in!=' ' && in !='#'){
@@ -144,9 +153,9 @@ EOF		"\0"
 			stack.pop();
 			indentLevel--;
 			std::cout<<"DEDENT ";
-		}else{
-			/*std::cout<<"Indentation error in line: "<<newLine;*/
-			/*yyterminate();*/
+		}else if(nivel!=indentLevel){
+			std::cout<<"Indentation error in line: "<<newLine;
+			yyterminate();
 		}
 		nivel=0;}
 {EOF}		std::cout<<"EOF";
