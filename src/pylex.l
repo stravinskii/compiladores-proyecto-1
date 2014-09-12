@@ -46,6 +46,7 @@ PLUS		"+"
 MINUS		"-"
 MULT		"*"
 DIV		"/"
+MOD		"%"
 
 /*Administrativos y caracteres especiales*/
 
@@ -103,6 +104,8 @@ EOF		"\0"
 {MINUS}		std::cout<<" -";
 {MULT}		std::cout<<" *";
 {DIV}		std::cout<<" /";
+{MOD}		std::cout<<" %";
+
 {SALIR}		yyterminate();
 {ERROR}		{std::cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
