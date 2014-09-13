@@ -1,11 +1,14 @@
 %{
 #include <iostream>
 #include "../lib/Stack.h"
-#include <string>
+#include <fstream>
 
+using namespace std;
 int newLine=1;
 Stack stack;
-std::string salida="";
+ofstream arch_salida;
+
+
 
 %}
 
@@ -67,78 +70,78 @@ EOF		"\0"
 
 %%
 
-{FALSE}		std::cout << "FALSE";salida.append("FALSE");
-{CLASS}		std::cout << "CLASS";salida.append("CLASS");
-{FINALLY}	std::cout << "FINALLY";salida.append("FINALLY");
-{IS}		std::cout << "IS";salida.append("IS");
-{RETURN}	std::cout << "RETURN";salida.append("RETURN");
-{NONE}		std::cout << "NONE";salida.append("NONE");
-{CONTINUE}	std::cout << "CONTINUE";salida.append("CONTINUE");
-{FOR}		std::cout << "FOR";salida.append("FOR");
-{LAMBDA}	std::cout << "LAMBDA";salida.append("LAMBDA");
-{TRY}		std::cout << "TRY";salida.append("TRY");
-{TRUE}		std::cout << "TRUE";salida.append("TRUE");
-{DEF}		std::cout << "DEF";salida.append("DEF");
-{FROM}		std::cout << "FROM";salida.append("FROM");
-{WHILE}		std::cout << "WHILE";salida.append("WHILE");
-{AND}		std::cout << "AND";salida.append("AND");
-{DEL}		std::cout << "DEL";salida.append("DEL");
-{NOT}		std::cout << "NOT";salida.append("NOT");
-{WITH}		std::cout << "WITH";salida.append("WITH");
-{AS}		std::cout << "AS";salida.append("AS");
-{ELIF}		std::cout << "ELIF";salida.append("ELIF");
-{IF}		std::cout << "IF";salida.append("IF");
-{OR}		std::cout << "OR";salida.append("OR");
-{ELSE}		std::cout << "ELSE";salida.append("ELSE");
-{IMPORT}	std::cout << "IMPORT";salida.append("IMPORT");
-{PASS}		std::cout << "PASS";salida.append("PASS");
-{BREAK}		std::cout << "BREAK";salida.append("BREAK");
-{EXCEPT}	std::cout << "EXCEPT";salida.append("EXCEPT");
-{IN}		std::cout << "IN";salida.append("IN");
-{PRINT}		std::cout << "PRINT";salida.append("PRINT");
-{EQUALS}	std::cout << "EQUALS";salida.append("EQUALS");
-{ASSIGN}	std::cout << "ASSIGN";salida.append("ASSIGN");
-{NUMBER}	std::cout << "NUMBER";salida.append("NUMBER");
+{FALSE}		cout << "FALSE";arch_salida<<"FALSE";
+{CLASS}		cout << "CLASS";arch_salida<<"CLASS";
+{FINALLY}	cout << "FINALLY";arch_salida<<"FINALLY";
+{IS}		cout << "IS";arch_salida<<"IS";
+{RETURN}	cout << "RETURN";arch_salida<<"RETURN";
+{NONE}		cout << "NONE";arch_salida<<"NONE";
+{CONTINUE}	cout << "CONTINUE";arch_salida<<"CONTINUE";
+{FOR}		cout << "FOR";arch_salida<<"FOR";
+{LAMBDA}	cout << "LAMBDA";arch_salida<<"LAMBDA";
+{TRY}		cout << "TRY";arch_salida<<"TRY";
+{TRUE}		cout << "TRUE";arch_salida<<"TRUE";
+{DEF}		cout << "DEF";arch_salida<<"DEF";
+{FROM}		cout << "FROM";arch_salida<<"FROM";
+{WHILE}		cout << "WHILE";arch_salida<<"WHILE";
+{AND}		cout << "AND";arch_salida<<"AND";
+{DEL}		cout << "DEL";arch_salida<<"DEL";
+{NOT}		cout << "NOT";arch_salida<<"NOT";
+{WITH}		cout << "WITH";arch_salida<<"WITH";
+{AS}		cout << "AS";arch_salida<<"AS";
+{ELIF}		cout << "ELIF";arch_salida<<"ELIF";
+{IF}		cout << "IF";arch_salida<<"IF";
+{OR}		cout << "OR";arch_salida<<"OR";
+{ELSE}		cout << "ELSE";arch_salida<<"ELSE";
+{IMPORT}	cout << "IMPORT";arch_salida<<"IMPORT";
+{PASS}		cout << "PASS";arch_salida<<"PASS";
+{BREAK}		cout << "BREAK";arch_salida<<"BREAK";
+{EXCEPT}	cout << "EXCEPT";arch_salida<<"EXCEPT";
+{IN}		cout << "IN";arch_salida<<"IN";
+{PRINT}		cout << "PRINT";arch_salida<<"PRINT";
+{EQUALS}	cout << "EQUALS";arch_salida<<"EQUALS";
+{ASSIGN}	cout << "ASSIGN";arch_salida<<"ASSIGN";
+{NUMBER}	cout << "NUMBER";arch_salida<<"NUMBER";
 
-{COMMA}		std::cout<<" ,";salida.append(" ,");
-{PLUS}		std::cout<<" +";salida.append(" +");
-{MINUS}		std::cout<<" -";salida.append(" -");
-{MULT}		std::cout<<" *";salida.append(" *");
-{DIV}		std::cout<<" /";salida.append(" /");
-{MOD}		std::cout<<" %";salida.append(" %");
+{COMMA}		cout<<" ,";arch_salida<<" ,";
+{PLUS}		cout<<" +";arch_salida<<" +";
+{MINUS}		cout<<" -";arch_salida<<" -";
+{MULT}		cout<<" *";arch_salida<<" *";
+{DIV}		cout<<" /";arch_salida<<" /";
+{MOD}		cout<<" %";arch_salida<<" %";
 
 
-{ERROR}		{std::cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
+{ERROR}		{cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
 		while(in != '\n'){
 			in=yyinput();
 		}
-		salida.append("COMMENT NEWLINE\n");
-		std::cout <<"COMMENT NEWLINE\n";newLine++;}
-{NEWLINE}	{salida.append(" NEWLINE\n");
-		std::cout <<" NEWLINE\n"; newLine++;
+		arch_salida<<"COMMENT NEWLINE\n";
+		cout <<"COMMENT NEWLINE\n";newLine++;}
+{NEWLINE}	{arch_salida<<" NEWLINE\n";
+		cout <<" NEWLINE\n"; newLine++;
 		int in =yyinput(); 
 		if(in!='\t' && in!=' ' && in !='#'){
 			while(stack.get_Size()){
 				stack.pop();
-				salida.append("DEDENT ");
-				std::cout<<"DEDENT ";
+				arch_salida<<"DEDENT ";
+				cout<<"DEDENT ";
 			}
 		}
 		unput(in);
 		}		
-{ID}		std::cout <<"ID";salida.append("ID");
+{ID}		cout <<"ID";arch_salida<<"ID";
 {STRING}	{int in = yyinput();
 		while(in != '"' && in != '\n' ){
 			in=yyinput();
 		}
 		unput(' ');
 		if (in == '\n' || in==EOF){
-			std::cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
+			cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
 			yyterminate();
 		}else{
-		salida.append("STRING");
-		std::cout<<"STRING";}}
+		arch_salida<<"STRING";
+		cout<<"STRING";}}
 {INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
 		while(in==' '||in=='\t'){
 			if(in==' ')
@@ -148,8 +151,8 @@ EOF		"\0"
 				++spaces;
 				spaces=0;
 				++nivel;
-				salida.append("INDENT ");
-				std::cout<<"INDENT ";
+				arch_salida<<"INDENT ";
+				cout<<"INDENT ";
 			}
 			++nivel;
 		}
@@ -158,19 +161,19 @@ EOF		"\0"
 		if(nivel>indentLevel&& in != '#'){
 			stack.push(nivel);
 			indentLevel++;
-			salida.append("INDENT ");
-			std::cout<<"INDENT ";
+			arch_salida<<"INDENT ";
+			cout<<"INDENT ";
 		}else if(nivel<indentLevel && in != '#'){
 			stack.pop();
 			indentLevel--;
-			salida.append("DEDENT ");
-			std::cout<<"DEDENT ";
+			arch_salida<<"DEDENT ";
+			cout<<"DEDENT ";
 		}else if(nivel!=indentLevel && in != '#'){
-			std::cout<<"Error de indentación en la línea: "<<newLine;
+			cout<<"Error de indentación en la línea: "<<newLine;
 			yyterminate();
 		}
 		nivel=0;}
-{EOF}		std::cout<<"EOF";salida.append("EOF");
+{EOF}		cout<<"EOF";arch_salida<<"EOF";
 
 
 %%
@@ -182,7 +185,6 @@ int main(int argc, char *argv[])
 	Stack stack;
 	// push zero to stack as proposed in Python documentation
 	stack.push(0);
-
 	if (argc > 1)
 	{
 		yyin = fopen(argv[1], "r");
@@ -192,9 +194,9 @@ int main(int argc, char *argv[])
 	{
 		yyin = stdin;
 	}
-	
+	arch_salida.open("writer.txt");
 	yylex();
-	std::cout <<salida;
+	arch_salida.close();
 
 	
 }
