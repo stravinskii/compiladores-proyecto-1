@@ -54,7 +54,6 @@ MOD		"%"
 
 INDENT		"        "|"\t"
 DEDENT		"dedent"
-SALIR		"salir"
 ID		[a-z][a-z0-9]*
 NUMBER		[0-9]*
 FRACTION	[0-9]*.[0-9]*
@@ -108,7 +107,7 @@ EOF		"\0"
 {DIV}		std::cout<<" /";salida.append(" /");
 {MOD}		std::cout<<" %";salida.append(" %");
 
-{SALIR}		yyterminate();
+
 {ERROR}		{std::cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
 		while(in != '\n'){
