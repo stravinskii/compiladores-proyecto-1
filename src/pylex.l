@@ -52,14 +52,28 @@ MINUS		"-"
 MULT		"*"
 DIV		"/"
 MOD		"%"
+LESSTHAN	"<"
+GREATERTHAN	">"
 
-/*Administrativos y caracteres especiales*/
-
+/*Administrativos, tipos y caracteres especiales*/
+DOTS		":"
 INDENT		"        "|"\t"
 DEDENT		"dedent"
-ID		[a-z][a-z0-9]*
-NUMBER		[0-9]*
-FRACTION	[0-9]*.[0-9]*
+
+
+ID 			[a-zA-z][_a-zA-Z0-9]*
+NUMBER			{INTEGER}|{FLOATNUMBER}
+INTEGER        		{DECIMALINTEGER}
+DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
+NONZERODIGIT  		[1-9]
+DIGIT			[0-9]
+FLOATNUMBER  		{POINTFLOAT}|{EXPONENTFLOAT}
+POINTFLOAT   		{INTPART}+{FRACTION}|{INTPART}"."
+EXPONENTFLOAT		({INTPART}|{POINTFLOAT}){EXPONENT}
+INTPART      		{DIGIT}+
+FRACTION     		"."{DIGIT}+
+EXPONENT     		("e"|"E")("+"|"-"){1}{DIGIT}+
+
 NEWLINE		"\n"+
 COMMENT		"#"
 STRING		"\""
@@ -70,67 +84,65 @@ EOF		"\0"
 
 %%
 
-{FALSE}		cout << "FALSE";arch_salida<<"FALSE";
-{CLASS}		cout << "CLASS";arch_salida<<"CLASS";
-{FINALLY}	cout << "FINALLY";arch_salida<<"FINALLY";
-{IS}		cout << "IS";arch_salida<<"IS";
-{RETURN}	cout << "RETURN";arch_salida<<"RETURN";
-{NONE}		cout << "NONE";arch_salida<<"NONE";
-{CONTINUE}	cout << "CONTINUE";arch_salida<<"CONTINUE";
-{FOR}		cout << "FOR";arch_salida<<"FOR";
-{LAMBDA}	cout << "LAMBDA";arch_salida<<"LAMBDA";
-{TRY}		cout << "TRY";arch_salida<<"TRY";
-{TRUE}		cout << "TRUE";arch_salida<<"TRUE";
-{DEF}		cout << "DEF";arch_salida<<"DEF";
-{FROM}		cout << "FROM";arch_salida<<"FROM";
-{WHILE}		cout << "WHILE";arch_salida<<"WHILE";
-{AND}		cout << "AND";arch_salida<<"AND";
-{DEL}		cout << "DEL";arch_salida<<"DEL";
-{NOT}		cout << "NOT";arch_salida<<"NOT";
-{WITH}		cout << "WITH";arch_salida<<"WITH";
-{AS}		cout << "AS";arch_salida<<"AS";
-{ELIF}		cout << "ELIF";arch_salida<<"ELIF";
-{IF}		cout << "IF";arch_salida<<"IF";
-{OR}		cout << "OR";arch_salida<<"OR";
-{ELSE}		cout << "ELSE";arch_salida<<"ELSE";
-{IMPORT}	cout << "IMPORT";arch_salida<<"IMPORT";
-{PASS}		cout << "PASS";arch_salida<<"PASS";
-{BREAK}		cout << "BREAK";arch_salida<<"BREAK";
-{EXCEPT}	cout << "EXCEPT";arch_salida<<"EXCEPT";
-{IN}		cout << "IN";arch_salida<<"IN";
-{PRINT}		cout << "PRINT";arch_salida<<"PRINT";
-{EQUALS}	cout << "EQUALS";arch_salida<<"EQUALS";
-{ASSIGN}	cout << "ASSIGN";arch_salida<<"ASSIGN";
-{NUMBER}	cout << "NUMBER";arch_salida<<"NUMBER";
-
-{COMMA}		cout<<" ,";arch_salida<<" ,";
-{PLUS}		cout<<" +";arch_salida<<" +";
-{MINUS}		cout<<" -";arch_salida<<" -";
-{MULT}		cout<<" *";arch_salida<<" *";
-{DIV}		cout<<" /";arch_salida<<" /";
-{MOD}		cout<<" %";arch_salida<<" %";
-
+{FALSE}		arch_salida<<"FALSE";
+{CLASS}		arch_salida<<"CLASS";
+{FINALLY}	arch_salida<<"FINALLY";
+{IS}		arch_salida<<"IS";
+{RETURN}	arch_salida<<"RETURN";
+{NONE}		arch_salida<<"NONE";
+{CONTINUE}	arch_salida<<"CONTINUE";
+{FOR}		arch_salida<<"FOR";
+{LAMBDA}	arch_salida<<"LAMBDA";
+{TRY}		arch_salida<<"TRY";
+{TRUE}		arch_salida<<"TRUE";
+{DEF}		arch_salida<<"DEF";
+{FROM}		arch_salida<<"FROM";
+{WHILE}		arch_salida<<"WHILE";
+{AND}		arch_salida<<"AND";
+{DEL}		arch_salida<<"DEL";
+{NOT}		arch_salida<<"NOT";
+{WITH}		arch_salida<<"WITH";
+{AS}		arch_salida<<"AS";
+{ELIF}		arch_salida<<"ELIF";
+{IF}		arch_salida<<"IF";
+{OR}		arch_salida<<"OR";
+{ELSE}		arch_salida<<"ELSE";
+{IMPORT}	arch_salida<<"IMPORT";
+{PASS}		arch_salida<<"PASS";
+{BREAK}		arch_salida<<"BREAK";
+{EXCEPT}	arch_salida<<"EXCEPT";
+{IN}		arch_salida<<"IN";
+{PRINT}		arch_salida<<"PRINT";
+{EQUALS}	arch_salida<<"EQUALS";
+{ASSIGN}	arch_salida<<"ASSIGN";
+{NUMBER}	arch_salida<<"NUMBER";
+{COMMA}		arch_salida<<",";
+{PLUS}		arch_salida<<"+";
+{MINUS}		arch_salida<<"-";
+{MULT}		arch_salida<<"*";
+{DIV}		arch_salida<<"/";
+{MOD}		arch_salida<<"%";
+{DOTS}		arch_salida<<":";
+{LESSTHAN}	arch_salida<<"<";
+{GREATERTHAN}	arch_salida<<">";
 
 {ERROR}		{cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
 {COMMENT}	{int in=yyinput();
 		while(in != '\n'){
 			in=yyinput();
 		}
-		arch_salida<<"COMMENT NEWLINE\n";
-		cout <<"COMMENT NEWLINE\n";newLine++;}
-{NEWLINE}	{arch_salida<<" NEWLINE\n";
-		cout <<" NEWLINE\n"; newLine++;
+		arch_salida<<"COMMENT NEWLINE\n";newLine++;}
+{NEWLINE}	{arch_salida<<" NEWLINE\n"; newLine++;
 		int in =yyinput(); 
 		if(in!='\t' && in!=' ' && in !='#'){
 			while(stack.get_Size()){
 				stack.pop();
 				arch_salida<<"DEDENT ";
-				cout<<"DEDENT ";
 			}
 		}
 		unput(in);
 		}		
-{ID}		cout <<"ID";arch_salida<<"ID";
+{ID}		arch_salida<<"ID ";
 {STRING}	{int in = yyinput();
 		while(in != '"' && in != '\n' ){
 			in=yyinput();
@@ -141,7 +153,7 @@ EOF		"\0"
 			yyterminate();
 		}else{
 		arch_salida<<"STRING";
-		cout<<"STRING";}}
+		}}
 {INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
 		while(in==' '||in=='\t'){
 			if(in==' ')
@@ -152,7 +164,6 @@ EOF		"\0"
 				spaces=0;
 				++nivel;
 				arch_salida<<"INDENT ";
-				cout<<"INDENT ";
 			}
 			++nivel;
 		}
@@ -162,18 +173,16 @@ EOF		"\0"
 			stack.push(nivel);
 			indentLevel++;
 			arch_salida<<"INDENT ";
-			cout<<"INDENT ";
 		}else if(nivel<indentLevel && in != '#'){
 			stack.pop();
 			indentLevel--;
 			arch_salida<<"DEDENT ";
-			cout<<"DEDENT ";
 		}else if(nivel!=indentLevel && in != '#'){
 			cout<<"Error de indentación en la línea: "<<newLine;
 			yyterminate();
 		}
 		nivel=0;}
-{EOF}		cout<<"EOF";arch_salida<<"EOF";
+{EOF}		arch_salida<<"EOF";
 
 
 %%
@@ -194,9 +203,11 @@ int main(int argc, char *argv[])
 	{
 		yyin = stdin;
 	}
-	arch_salida.open("writer.txt");
+	arch_salida.open("ejemplo.pyl");
 	yylex();
+	cout<<"\n";
 	arch_salida.close();
+	
 
 	
 }
