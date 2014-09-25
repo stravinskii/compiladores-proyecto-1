@@ -5,7 +5,7 @@
 
 using namespace std;
 int newLine=1;
-Stack stack;
+stack stack;
 ofstream arch_salida;
 
 
@@ -45,20 +45,13 @@ BREAK		"break"
 EXCEPT		"except"
 IN		"in"
 PRINT		"print"
-EQUALS		"=="
-ASSIGN		"="
-PLUS		"+"
-MINUS		"-"
-MULT		"*"
-DIV		"/"
-MOD		"%"
-LESSTHAN	"<"
-GREATERTHAN	">"
+OPERATORS			("+"|"-"|"*"|"**"|"/"|"//"|"%"|"<<"|">>"|"&"|"|"|"^"|"~"|"<"|">"|"<="|">="|"=="|"!=")
+DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*="|"/="|"//="|"%="|"&="|"|="|"^="|">>="|"<<="|"**=")
+
 
 /*Administrativos, tipos y caracteres especiales*/
 DOTS		":"
-INDENT		"        "|"\t"
-DEDENT		"dedent"
+
 
 
 ID 			[a-zA-z][_a-zA-Z0-9]*
@@ -68,120 +61,119 @@ DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
 NONZERODIGIT  		[1-9]
 DIGIT			[0-9]
 FLOATNUMBER  		{POINTFLOAT}|{EXPONENTFLOAT}
-POINTFLOAT   		{INTPART}+{FRACTION}|{INTPART}"."
+POINTFLOAT   		{INTPART}?{FRACTION}|{INTPART}"."
 EXPONENTFLOAT		({INTPART}|{POINTFLOAT}){EXPONENT}
 INTPART      		{DIGIT}+
 FRACTION     		"."{DIGIT}+
 EXPONENT     		("e"|"E")("+"|"-"){1}{DIGIT}+
 
-NEWLINE		"\n"+
+NEWLINE		"\n"
 COMMENT		"#"
 STRING		"\""
 COMMA		","
-ERROR		"mistake"
 EOF		"\0"
 
 
 %%
 
-{FALSE}		arch_salida<<"FALSE";
-{CLASS}		arch_salida<<"CLASS";
-{FINALLY}	arch_salida<<"FINALLY";
-{IS}		arch_salida<<"IS";
-{RETURN}	arch_salida<<"RETURN";
-{NONE}		arch_salida<<"NONE";
-{CONTINUE}	arch_salida<<"CONTINUE";
-{FOR}		arch_salida<<"FOR";
-{LAMBDA}	arch_salida<<"LAMBDA";
-{TRY}		arch_salida<<"TRY";
-{TRUE}		arch_salida<<"TRUE";
-{DEF}		arch_salida<<"DEF";
-{FROM}		arch_salida<<"FROM";
-{WHILE}		arch_salida<<"WHILE";
-{AND}		arch_salida<<"AND";
-{DEL}		arch_salida<<"DEL";
-{NOT}		arch_salida<<"NOT";
-{WITH}		arch_salida<<"WITH";
-{AS}		arch_salida<<"AS";
-{ELIF}		arch_salida<<"ELIF";
-{IF}		arch_salida<<"IF";
-{OR}		arch_salida<<"OR";
-{ELSE}		arch_salida<<"ELSE";
-{IMPORT}	arch_salida<<"IMPORT";
-{PASS}		arch_salida<<"PASS";
-{BREAK}		arch_salida<<"BREAK";
-{EXCEPT}	arch_salida<<"EXCEPT";
-{IN}		arch_salida<<"IN";
-{PRINT}		arch_salida<<"PRINT";
-{EQUALS}	arch_salida<<"EQUALS";
-{ASSIGN}	arch_salida<<"ASSIGN";
-{NUMBER}	arch_salida<<"NUMBER";
-{COMMA}		arch_salida<<",";
-{PLUS}		arch_salida<<"+";
-{MINUS}		arch_salida<<"-";
-{MULT}		arch_salida<<"*";
-{DIV}		arch_salida<<"/";
-{MOD}		arch_salida<<"%";
-{DOTS}		arch_salida<<":";
-{LESSTHAN}	arch_salida<<"<";
-{GREATERTHAN}	arch_salida<<">";
+{FALSE}		arch_salida<<"FALSE ";
+{CLASS}		arch_salida<<"CLASS ";
+{FINALLY}	arch_salida<<"FINALLY ";
+{IS}		arch_salida<<"IS ";
+{RETURN}	arch_salida<<"RETURN ";
+{NONE}		arch_salida<<"NONE ";
+{CONTINUE}	arch_salida<<"CONTINUE ";
+{FOR}		arch_salida<<"FOR ";
+{LAMBDA}	arch_salida<<"LAMBDA ";
+{TRY}		arch_salida<<"TRY ";
+{TRUE}		arch_salida<<"TRUE ";
+{DEF}		arch_salida<<"DEF ";
+{FROM}		arch_salida<<"FROM ";
+{WHILE}		arch_salida<<"WHILE ";
+{AND}		arch_salida<<"AND ";
+{DEL}		arch_salida<<"DEL ";
+{NOT}		arch_salida<<"NOT ";
+{WITH}		arch_salida<<"WITH ";
+{AS}		arch_salida<<"AS ";
+{ELIF}		arch_salida<<"ELIF ";
+{IF}		arch_salida<<"IF ";
+{OR}		arch_salida<<"OR ";
+{ELSE}		arch_salida<<"ELSE ";
+{IMPORT}	arch_salida<<"IMPORT ";
+{PASS}		arch_salida<<"PASS ";
+{BREAK}		arch_salida<<"BREAK ";
+{EXCEPT}	arch_salida<<"EXCEPT ";
+{IN}		arch_salida<<"IN ";
+{PRINT}		arch_salida<<"PRINT ";
+{NUMBER}	arch_salida<<"NUMBER ";
 
-{ERROR}		{cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
+
+{OPERATORS}	arch_salida<<yytext;
+{DELIMITERS} 	arch_salida<<yytext;
+
+
 {COMMENT}	{int in=yyinput();
 		while(in != '\n'){
 			in=yyinput();
 		}
-		arch_salida<<"COMMENT NEWLINE\n";newLine++;}
-{NEWLINE}	{arch_salida<<" NEWLINE\n"; newLine++;
-		int in =yyinput(); 
+		unput(in);
+		}
+{NEWLINE}	{
+		arch_salida<<"NEWLINE\n";
+		newLine++;
+		int in =yyinput();
+		while(in=='\n'){
+			newLine++;
+			in =yyinput();
+		}
 		if(in!='\t' && in!=' ' && in !='#'){
-			while(stack.get_Size()){
+			while(stack.peek()!=0){
 				stack.pop();
 				arch_salida<<"DEDENT ";
 			}
+		}else if(in =='\t'|| in==' '){
+			int indentLevel= stack.peek();
+			int spaces= 0;
+			/*arch_salida<<in<<"<--IN";
+			arch_salida<<spaces<<"<--SPACES";*/
+			while(in==' '||in=='\t'){
+				if(in==' ')
+					spaces++;
+				if(in=='\t')
+					spaces+=8;
+				in=yyinput();
+			}
+			/*arch_salida<<spaces<<"<--SPACES";*/
+			if(spaces>indentLevel && in !='#'){
+				stack.push(spaces);
+				arch_salida<<"INDENT ";
+			}else if(spaces<indentLevel && in !='#'){
+				stack.pop();
+				if (spaces== stack.peek())
+					arch_salida<<"DEDENT ";	
+				else{
+					cout<<"Error de indentación en la línea: "<<newLine;
+					yyterminate();
+				}
+
+			}
 		}
 		unput(in);
-		}		
+		}
+		
 {ID}		arch_salida<<"ID ";
 {STRING}	{int in = yyinput();
-		while(in != '"' && in != '\n' ){
+		while(in != '"' && in != '\n'){
 			in=yyinput();
 		}
-		unput(' ');
 		if (in == '\n' || in==EOF){
 			cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
 			yyterminate();
 		}else{
-		arch_salida<<"STRING";
+		arch_salida<<"STRING ";
 		}}
-{INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
-		while(in==' '||in=='\t'){
-			if(in==' ')
-				spaces++;
-			in=yyinput();
-			if(spaces==8){
-				++spaces;
-				spaces=0;
-				++nivel;
-				arch_salida<<"INDENT ";
-			}
-			++nivel;
-		}
-		unput(in);
-		
-		if(nivel>indentLevel&& in != '#'){
-			stack.push(nivel);
-			indentLevel++;
-			arch_salida<<"INDENT ";
-		}else if(nivel<indentLevel && in != '#'){
-			stack.pop();
-			indentLevel--;
-			arch_salida<<"DEDENT ";
-		}else if(nivel!=indentLevel && in != '#'){
-			cout<<"Error de indentación en la línea: "<<newLine;
-			yyterminate();
-		}
-		nivel=0;}
+
+
 {EOF}		arch_salida<<"EOF";
 
 
@@ -191,8 +183,7 @@ EOF		"\0"
 
 int main(int argc, char *argv[])
 {
-	Stack stack;
-	// push zero to stack as proposed in Python documentation
+	
 	stack.push(0);
 	if (argc > 1)
 	{
@@ -205,7 +196,7 @@ int main(int argc, char *argv[])
 	}
 	arch_salida.open("ejemplo.pyl");
 	yylex();
-	cout<<"\n";
+	cout<<'\n';
 	arch_salida.close();
 	
 

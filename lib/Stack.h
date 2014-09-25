@@ -1,68 +1,105 @@
-#include <list>
-/**
- * Clase que modela un TAD Pila. 
+/*
+ * Simple implementation of a STACK to learn and get familiarized with C++.
+ *
+ * @author: Alan Mauricio García García
  */
-class Stack{
-	std::list<int> list;
-	public:
-		void push(int value);
-		int get_Size();
-		int pick();
-		void pop();
-		void print_Content();
-		int suma();
-};
 
-/**
- * Función push tipica en el TAD Pila. 
- */
-void Stack::push(int value){
-	//printf("Insertando el valor %i\n",value);
-	list.push_front(value);
-}
+#include <iostream>
+#include <string>
 
-/**
- * Función que nos dice cuantos elementos tiene el  TAD Pila. 
- */
-int Stack::get_Size(){
-	return list.size();
-}
+// Struct to use as abstract implementation of the stack core / list
+ struct Node
+ {
+ 	int data;
+ 	struct Node *next;
+ };
 
+ typedef struct Node node;
 
-/**
- * Función pick tipica en el TAD Pila. 
- */
-int Stack::pick(){
-	return list.front();
-}
+// The abstract implementation of a Stack
+ class stack
+ {
+ public:
+ 	stack();
 
-/**
- * Función pop tipica en el TAD Pila. 
- */
-void Stack::pop(){
-	list.pop_front();
-}
+ 	void pop();
+ 	void print();
+ 	void push(int e);
+ 	bool isEmpty();
+ 	int peek();
+ 	int getSize();
 
-/**
- * Función que imprime el contenido de la Pila. 
- */
-void Stack::print_Content(){
-	printf("Printing content:\n");
-	for(std::list<int>::iterator it=list.begin(); it != list.end(); ++it)
-		printf("%i\n",*it);
-		//printf("El elemento actual es %i\n",*it);
-		
-}
+ private:
+ 	// Variable to keep track of the stack size
+ 	int size;
+ 	// Node to implement the stack
+ 	node *elements;
+ };
 
-/**
- * Funcion que va a sumar los 2 primeros elementos de la pila y luego los saca. 
- */
-int Stack::suma(){
-	int x,y;
-	x=pick();
-	pop();
-	y=pick();
-	pop();
-	
-	return x+y;
-}
+// Default constructor initializes size as zero and the list
+ stack::stack()
+ {
+ 	elements = (node*) malloc(sizeof(node));
+ 	size = 0;
+ }
+
+// Returns the size of the stack
+ int stack::getSize()
+ {
+ 	return size;
+ }
+
+// Returns true if the stack is empty, false otherwise
+ bool stack::isEmpty()
+ {
+ 	if(size >= 1) {
+ 		return false;
+ 	} 
+ 	return true;
+ }
+
+// Returns the top element of the stack, but does not removes it
+ int stack::peek()
+ {
+ 	if(!isEmpty()) {
+ 		return elements->data;
+ 	}
+ }
+
+// Pushes a new element into the stack
+ void stack::push(int e)
+ {
+ 	node *pushed = (node*) malloc(sizeof(node));
+ 	pushed->data = e;
+ 	pushed->next = elements;
+ 	elements = pushed;
+ 	size += 1;
+ }
+
+// Removes the top element of the stack
+ void stack::pop()
+ {
+ 	if(!isEmpty()){
+ 		node *pop = elements->next;
+ 		elements = pop;
+ 		size -= 1;
+ 	}
+ }
+
+// Prints a representation of the stack with each element on a seperate line and element counter
+ void stack::print()
+ {
+ 	if(isEmpty()){
+ 		std::cout << "[ empty ]" << std::endl;
+ 		return;
+ 	}
+
+ 	int count = getSize();
+ 	node *current = elements;
+ 	for (int i = 0; i < getSize(); ++i)
+ 	{
+ 		std::cout << "[" << count << "]: " << current->data << std::endl;
+ 		current = current->next;
+ 		count--;
+ 	}
+ }
