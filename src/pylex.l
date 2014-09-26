@@ -73,7 +73,7 @@ STRING		"\""
 COMMA		","
 EOF		"\0"
 
-
+%s NUEVALINEA
 %%
 
 {FALSE}		arch_salida<<"FALSE ";
@@ -111,13 +111,21 @@ EOF		"\0"
 {OPERATORS}	arch_salida<<yytext;
 {DELIMITERS} 	arch_salida<<yytext;
 
-
+<NUEVALINEA>{COMMENT}	{
+			int in=yyinput();
+			while(in != '\n'){
+				in=yyinput();
+			}
+			BEGIN(INITIAL);
+			}
 {COMMENT}	{int in=yyinput();
-		while(in != '\n'){
-			in=yyinput();
-		}
-		unput(in);
-		}
+			while(in != '\n'){
+				in=yyinput();
+			}
+			unput(in);
+			
+			}
+
 {NEWLINE}	{
 		arch_salida<<"NEWLINE\n";
 		newLine++;
@@ -158,7 +166,8 @@ EOF		"\0"
 
 			}
 		}
-		unput(in);
+		BEGIN(NUEVALINEA);
+		unput(in);	
 		}
 		
 {ID}		arch_salida<<"ID ";

@@ -8,3 +8,4 @@ while 0_avanza: #comentario a media linea
 	#Comentario mal identado	
 			print " esta es una cadenaa"
 			z = 10
+m = 3
