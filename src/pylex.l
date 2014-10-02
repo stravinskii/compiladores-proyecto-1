@@ -117,13 +117,13 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 					}
 
 <DEDENT>{NEWLINE}	{
-						int in = yyinput();
+						char in = yyinput();
 						/* if it's an indent */
 						if (in == '\t' || in == ' ')
 						{
 							/* push back unmatching char */
 							unput(in);
-							BEGIN(INITIAL);
+							BEGIN(NEWLINE);
 							std::cout << " NEWLINE" << std::endl;
 						}
 						/* if it's a comment */
@@ -143,7 +143,6 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 							/* if last DEDENT was returned */
 							if (stack.peek() == 0)
 							{
-								// std::cout << "last dedent" << std::endl;
 								BEGIN(INITIAL);
 								std::cout << " NEWLINE" << std::endl;
 							}
@@ -152,8 +151,9 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 							{
 								stack.pop();
 								/* push back newline for next DEDENT */
-								yyless(yyleng);
-								std::cout << "DEDENT";
+								// yyless(yyleng);
+								unput('\n');
+								std::cout << "DEDENT ";
 							}
 						}
 					}
@@ -267,7 +267,7 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 						if (stack.peek() < indent)
 						{
 							stack.push(indent);
-							std::cout << "INDENT";
+							std::cout << "INDENT ";
 
 						}
 
@@ -295,7 +295,7 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 								return DEDENT;
 							}
 							*/
-							std::cout << "DEDENT";
+							std::cout << "DEDENT ";
 						}
 					}
 
