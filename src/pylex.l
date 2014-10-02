@@ -7,7 +7,6 @@ stack stack;
 // ofstream output;
 
 int new_line = 1;
-bool start = true;
 
 %}
 
