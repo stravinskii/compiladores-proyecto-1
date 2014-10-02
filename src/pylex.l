@@ -1,14 +1,13 @@
 %{
-#include <iostream>
-#include "../lib/Stack.h"
 #include <fstream>
+#include <iostream>
+#include "lib/stack.h"
 
-using namespace std;
-int newLine=1;
-Stack stack;
-ofstream arch_salida;
+stack stack;
+// ofstream output;
 
-
+int new_line = 1;
+bool start = true;
 
 %}
 
@@ -16,44 +15,7 @@ ofstream arch_salida;
 %option outfile="pylex.cpp"
 
 
-/* Keywords */
-FALSE				False
-CLASS				class
-FINALLY				finally
-IS					is
-RETURN				return
-NONE				None
-CONTINUE			continue
-FOR					for
-LAMBDA				lambda
-TRY					try
-TRUE				True
-DEF					def
-FROM				from
-WHILE				while
-AND					and
-DEL					del
-NOT					not
-WITH				with
-AS					as
-ELIF				elif
-IF					if
-OR					or
-ELSE				else
-IMPORT				import
-PASS				pass
-BREAK				break
-EXCEPT				except
-IN					in
-PRINT				print
-
-/*Administrativos, tipos y caracteres especiales*/
-DOTS				":"
-INDENT				"        "|"\t"
-DEDENT				"dedent"
-
-
-ID 					[a-zA-z][_a-zA-Z0-9]*
+NAME 				[a-zA-z][_a-zA-Z0-9]*
 NUMBER				{INTEGER}|{FLOATNUMBER}
 INTEGER        		{DECIMALINTEGER}
 DECIMALINTEGER		{NONZERODIGIT}{DIGIT}*|"0"+
@@ -69,133 +31,295 @@ EXPONENT     		("e"|"E")("+"|"-"){1}{DIGIT}+
 NEWLINE				"\n"+
 COMMENT				"#"
 STRING				"\""
+INDENT				"\t"|" "
 
+KEYWORDS			("False"|"class"|"finally"|"is"|"return"|"None"|"continue"|"for"|"lambda"|"try"|"True"|"def"|"from"|"while"|"and"|"del"|"not"|"with"|"as"|"elif"|"if"|"or"|"else"|"import"|"pass"|"break"|"except"|"in"|"print")
 OPERATORS			("+"|"-"|"*"|"**"|"/"|"//"|"%"|"<<"|">>"|"&"|"|"|"^"|"~"|"<"|">"|"<="|">="|"=="|"!=")
 DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*="|"/="|"//="|"%="|"&="|"|="|"^="|">>="|"<<="|"**=")
 
-COMMA				","
-ERROR				"mistake"
-EOF					"\0"
-
-
+%s START
+%s NEWLINE
+%s DEDENT
 %%
 
-{FALSE}		arch_salida<<"FALSE";
-{CLASS}		arch_salida<<"CLASS";
-{FINALLY}	arch_salida<<"FINALLY";
-{IS}		arch_salida<<"IS";
-{RETURN}	arch_salida<<"RETURN";
-{NONE}		arch_salida<<"NONE";
-{CONTINUE}	arch_salida<<"CONTINUE";
-{FOR}		arch_salida<<"FOR";
-{LAMBDA}	arch_salida<<"LAMBDA";
-{TRY}		arch_salida<<"TRY";
-{TRUE}		arch_salida<<"TRUE";
-{DEF}		arch_salida<<"DEF";
-{FROM}		arch_salida<<"FROM";
-{WHILE}		arch_salida<<"WHILE";
-{AND}		arch_salida<<"AND";
-{DEL}		arch_salida<<"DEL";
-{NOT}		arch_salida<<"NOT";
-{WITH}		arch_salida<<"WITH";
-{AS}		arch_salida<<"AS";
-{ELIF}		arch_salida<<"ELIF";
-{IF}		arch_salida<<"IF";
-{OR}		arch_salida<<"OR";
-{ELSE}		arch_salida<<"ELSE";
-{IMPORT}	arch_salida<<"IMPORT";
-{PASS}		arch_salida<<"PASS";
-{BREAK}		arch_salida<<"BREAK";
-{EXCEPT}	arch_salida<<"EXCEPT";
-{IN}		arch_salida<<"IN";
-{PRINT}		arch_salida<<"PRINT";
-{NUMBER}	arch_salida<<"NUMBER";
-{COMMA}		arch_salida<<",";
-{OPERATORS}	arch_salida<<yytext;
-{DELIMITERS} arch_salida<<yytext;
+{KEYWORDS}		{
+					// yylval.cadena = yytext;
+					std::cout << yytext;
+					BEGIN(INITIAL);
+					// return KEYWORDS
+				}
+{OPERATORS}		{
+					// yylval.cadena = yytext;
+					std::cout << yytext;
+					BEGIN(INITIAL);
+					// return OPERATORS
+				}
+{DELIMITERS} 	{
+					// yytext.cadena = yytext;
+					std::cout << yytext;
+					BEGIN(INITIAL);
+					// return DELIMITERS
+				}
 
-{ERROR}		{cout<<"Error de sintáxis en la línea " <<newLine; yyterminate();}
-{COMMENT}	{int in=yyinput();
-		while(in != '\n'){
-			in=yyinput();
-		}
-		arch_salida<<"COMMENT NEWLINE\n";newLine++;}
-{NEWLINE}	{arch_salida<<" NEWLINE\n"; newLine++;
-		int in =yyinput(); 
-		if(in!='\t' && in!=' ' && in !='#'){
-			while(stack.get_Size()){
-				stack.pop();
-				arch_salida<<"DEDENT ";
-			}
-		}
-		unput(in);
-		}		
-{ID}		arch_salida<<"ID ";
-{STRING}	{int in = yyinput();
-		while(in != '"' && in != '\n' ){
-			in=yyinput();
-		}
-		unput(' ');
-		if (in == '\n' || in==EOF){
-			cout<<"Error de sintaxis en la línea "<<newLine <<": String no terminada correctamente\n";
-			yyterminate();
-		}else{
-		arch_salida<<"STRING";
-		}}
-{INDENT}	{int in=yyinput(); int spaces=0;int indentLevel= stack.pick(); int nivel=1;
-		while(in==' '||in=='\t'){
-			if(in==' ')
-				spaces++;
-			in=yyinput();
-			if(spaces==8){
-				++spaces;
-				spaces=0;
-				++nivel;
-				arch_salida<<"INDENT ";
-			}
-			++nivel;
-		}
-		unput(in);
-		
-		if(nivel>indentLevel&& in != '#'){
-			stack.push(nivel);
-			indentLevel++;
-			arch_salida<<"INDENT ";
-		}else if(nivel<indentLevel && in != '#'){
-			stack.pop();
-			indentLevel--;
-			arch_salida<<"DEDENT ";
-		}else if(nivel!=indentLevel && in != '#'){
-			cout<<"Error de indentación en la línea: "<<newLine;
-			yyterminate();
-		}
-		nivel=0;}
-{EOF}		arch_salida<<"EOF";
+{FLOATNUMBER}	{ 
+					/* yylval.flotante = atof(yytext); */
+					BEGIN(INITIAL);
+					std::cout << "NUMBER";
+				}
+{INTEGER}		{ 
+					/* yylval.entero = atoi(yytext); */
+					BEGIN(INITIAL);
+					std::cout << "NUMBER"; 
+				}
 
+{NAME}		{
+				/* yylval.identificador = yytext; */
+				BEGIN(INITIAL);
+				std::cout << "NAME";
+			}
+
+{STRING}	{
+				int in = yyinput();
+				while (in != '"')
+				{
+					/* Python doesnt allow multi-line strings */
+					in = yyinput();
+					if (in == '\n' || in == EOF)
+					{
+						std::cout << "File \"" << yyin << "\", line " << new_line << std::endl;
+						std::cout << "Syntax error: EOL while scanning a string" << std::endl;
+						yyterminate();
+					}
+				}
+				/* yylval.cadena = yytext; */
+				std::cout << "STRING";
+				BEGIN(INITIAL);
+			}
+
+<START>{NEWLINE}	{
+						new_line++;
+						int in = yyinput();
+						if (in == '\n')
+						{
+							while (in != '\n')
+							{
+								new_line++;
+								in = yyinput();
+							}
+						}
+
+						if (in != '#')
+						{
+							BEGIN(INITIAL);
+						}
+
+						/* push back unmatching char */
+						unput(in);
+					}
+
+<DEDENT>{NEWLINE}	{
+						int in = yyinput();
+						/* if it's an indent */
+						if (in == '\t' || in == ' ')
+						{
+							/* push back unmatching char */
+							unput(in);
+							BEGIN(INITIAL);
+							std::cout << " NEWLINE" << std::endl;
+						}
+						/* if it's a comment */
+						else if (in == '#')
+						{
+							/* push back unmatching char */
+							unput(in);
+							BEGIN(NEWLINE);
+							std::cout << " NEWLINE" << std::endl;
+						}
+						/* if it's not an INDENT or COMMENT check DEDENT */
+						else
+						{
+							/* push back unmatching char */
+							unput(in);
+
+							/* if last DEDENT was returned */
+							if (stack.peek() == 0)
+							{
+								// std::cout << "last dedent" << std::endl;
+								BEGIN(INITIAL);
+								std::cout << " NEWLINE" << std::endl;
+							}
+							/* there are still DEDENTS level to pop */
+							else
+							{
+								stack.pop();
+								/* push back newline for next DEDENT */
+								yyless(yyleng);
+								std::cout << "DEDENT";
+							}
+						}
+					}
+
+{NEWLINE}	{
+				new_line++;
+				int in = yyinput();
+				if (in == '\n')
+				{
+					while (in != '\n')
+					{
+						new_line++;
+						in = yyinput();	
+					}
+				}
+
+				/* push back unmatching char */
+				unput(in);
+				/* push back last newline for DEDENT check */
+				BEGIN(DEDENT);
+				// yyless(yyleng);
+				unput('\n');
+			}
+
+<START>{COMMENT}	{
+						int in = yyinput();
+						while (in != '\n')
+						{
+							in = yyinput();
+						}
+
+						in = yyinput();
+						if (in != '#' && in != '\n')
+						{
+							BEGIN(INITIAL);
+						}
+
+						/* push back unmatching char */
+						unput(in);
+					}
+
+<NEWLINE>{COMMENT}	{
+						int in = yyinput();
+						while (in != '\n')
+						{
+							in = yyinput();
+						}
+						new_line++;
+
+						/* check if there are more line comments */
+						in = yyinput();
+						if (in != '#')
+						{
+							BEGIN(INITIAL);
+						}
+
+						/* push back unmatching char */
+						unput(in);
+					}
+
+{COMMENT}	{
+				int in = yyinput();
+				while(in != '\n')
+				{
+					in = yyinput();
+				}
+				unput(in);
+				new_line++;
+			}
+
+<NEWLINE>{INDENT}	{
+						int indent = 1;
+						int in = yyinput();
+
+						/* case: whitespace indent */
+						if (in == ' ')
+						{
+							unput(in);
+							while (in == ' ')
+							{
+								indent++;
+								in = yyinput();
+							}
+
+							/* push back last unmatched char */
+							unput(in);
+						}
+
+						/* case: tab indent */
+						else if (in == '\t')
+						{
+							unput(in);
+							while (in == '\t')
+							{
+								indent++;
+								in = yyinput();
+							}
+							/* push back last unmatched char */
+							unput(in);
+						}
+
+						/* case: only indent */
+						else
+						{
+							/* push back last unmatched char */
+							unput(in);
+						}
+
+						/* if indent level matches stack peek there's nothing to do */
+
+						if (stack.peek() < indent)
+						{
+							stack.push(indent);
+							std::cout << "INDENT";
+
+						}
+
+						else if (stack.peek() > indent)
+						{
+							int dedents = stack.peek();
+							/* pop stack's indent levels until match */
+							while (stack.peek() != indent)
+							{
+								if (stack.isEmpty())
+								{
+									std::cout << std::endl;
+									std::cout << "File \"" << yyin << "\", line " << new_line << std::endl;
+									std::cout << "Indent error: unindent does not match any outer indentation level" << std::endl;
+									yyterminate();
+								}
+
+								stack.pop();
+							}
+
+							/* matched unindent level */
+							/*
+							for (int i = 0; i < dedents - 1; i++)
+							{
+								return DEDENT;
+							}
+							*/
+							std::cout << "DEDENT";
+						}
+					}
 
 %%
-
-
 
 int main(int argc, char *argv[])
 {
-	Stack stack;
-	// push zero to stack as proposed in Python documentation
+	BEGIN(START);
+
+	/* push zero to stack as proposed in Python documentation */
 	stack.push(0);
+
 	if (argc > 1)
 	{
 		yyin = fopen(argv[1], "r");
-		
 	} 
 	else
 	{
 		yyin = stdin;
 	}
-	arch_salida.open("ejemplo.pyl");
-	yylex();
-	cout<<"\n";
-	arch_salida.close();
-	
 
-	
+	// output.open("pylex.pyl");
+	yylex();
+	std::cout << std::endl;
+	// output.close();	
 }
