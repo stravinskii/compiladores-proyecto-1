@@ -2,11 +2,25 @@
 #include <fstream>
 #include <iostream>
 #include "lib/stack.h"
-
 stack stack;
 // ofstream output;
 
 int new_line = 1;
+int newline_dedent = 0;
+
+/*
+
+TABNEWLINE			(("\t"|" ")+"\n")
+<NEWLINE>{TABNEWLINE}	{
+							std::cout<< "TABNEWLINE"<<std::endl;
+							std::cout<< /"yytext  "<<yytext<<std::endl;
+							new_line += yyleng / 2;
+							std::cout<<"yyleng "<<yyleng<<std::endl;
+							BEGIN(DEDENT);
+							unput('\n');
+						}
+
+*/
 
 %}
 
@@ -31,6 +45,7 @@ NEWLINE				"\n"+
 COMMENT				"#"
 STRING				"\""
 INDENT				"\t"|" "
+TABNEWLINE			(("\t"|" ")+"\n")
 
 KEYWORDS			("False"|"class"|"finally"|"is"|"return"|"None"|"continue"|"for"|"lambda"|"try"|"True"|"def"|"from"|"while"|"and"|"del"|"not"|"with"|"as"|"elif"|"if"|"or"|"else"|"import"|"pass"|"break"|"except"|"in"|"print")
 OPERATORS			("+"|"-"|"*"|"**"|"/"|"//"|"%"|"<<"|">>"|"&"|"|"|"^"|"~"|"<"|">"|"<="|">="|"=="|"!=")
@@ -95,6 +110,8 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 				BEGIN(INITIAL);
 			}
 
+
+
 <START>{NEWLINE}	{
 						new_line++;
 						int in = yyinput();
@@ -117,6 +134,7 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 					}
 
 <DEDENT>{NEWLINE}	{
+						// std::cout<< std::endl << "dedent newline" << std::endl;
 						char in = yyinput();
 						/* if it's an indent */
 						if (in == '\t' || in == ' ')
@@ -143,17 +161,31 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 							/* if last DEDENT was returned */
 							if (stack.peek() == 0)
 							{
+								if (!newline_dedent)
+								{
+									std::cout << " NEWLINE" << std::endl;
+								}
+
 								BEGIN(INITIAL);
-								std::cout << " NEWLINE" << std::endl;
+								newline_dedent = 0;
 							}
 							/* there are still DEDENTS level to pop */
 							else
 							{
-								stack.pop();
+								if (!newline_dedent)
+								{
+									newline_dedent = 1;
+									std::cout << "NEWLINE" << std::endl;
+								}
+								else
+								{
+									stack.pop();
+									// yyless(yyleng);
+									std::cout << "DEDENT ";
+								}
+
 								/* push back newline for next DEDENT */
-								// yyless(yyleng);
 								unput('\n');
-								std::cout << "DEDENT ";
 							}
 						}
 					}
@@ -166,7 +198,7 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 					while (in != '\n')
 					{
 						new_line++;
-						in = yyinput();	
+						in = yyinput();
 					}
 				}
 
@@ -224,43 +256,42 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 				new_line++;
 			}
 
+<NEWLINE>{TABNEWLINE}	{
+							new_line += yyleng / 2;
+						}
+
+
 <NEWLINE>{INDENT}	{
-						int indent = 1;
-						int in = yyinput();
-
-						/* case: whitespace indent */
-						if (in == ' ')
+						int indent = 0;
+						if (yytext == "\t")
 						{
-							unput(in);
-							while (in == ' ')
-							{
-								indent++;
-								in = yyinput();
-							}
-
-							/* push back last unmatched char */
-							unput(in);
+							indent = 8;
 						}
-
-						/* case: tab indent */
-						else if (in == '\t')
-						{
-							unput(in);
-							while (in == '\t')
-							{
-								indent++;
-								in = yyinput();
-							}
-							/* push back last unmatched char */
-							unput(in);
-						}
-
-						/* case: only indent */
 						else
 						{
-							/* push back last unmatched char */
-							unput(in);
+							indent = 1;
 						}
+
+						int in = yyinput();
+						while (in == ' ' || in == '\t')
+						{
+							/* case: whitespace indent */
+							if (in == ' ')
+							{
+								indent++;
+							}
+
+							/* case: tab indent */
+							else if (in == '\t')
+							{
+								indent+=8;
+							}
+
+							in = yyinput();
+						}
+
+						/* push back last unmatched char */
+						unput(in);
 
 						/* if indent level matches stack peek there's nothing to do */
 
@@ -289,15 +320,18 @@ DELIMITERS			("("|")"|"["|"]"|"{"|"}"|","|":"|"."|";"|"@"|"="|"->"|"+="|"-="|"*=
 							}
 
 							/* matched unindent level */
-							/*
-							for (int i = 0; i < dedents - 1; i++)
-							{
-								return DEDENT;
-							}
-							*/
 							std::cout << "DEDENT ";
 						}
 					}
+
+"<<EOF>>"	{
+				if (stack.peek() != 0)
+				{
+					stack.pop();
+					yyless(yyleng);
+					std::cout<< "DEDENT";
+				}
+			}
 
 %%
 
